@@ -1,11 +1,12 @@
 const sql = require('mssql');
 const mysql = require('mysql2');
+require('dotenv').config();
 
 const db = mysql.createConnection({
-    host: 'svc-03247994-6873-41e2-8489-4d45774f90ef-dml.gcp-virginia-1.svc.singlestore.com',
-    user: 'admin',
-    password: 'Password1!',
-    database: 'informacije',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
 
 });
 
