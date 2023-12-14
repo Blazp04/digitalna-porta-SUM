@@ -10,15 +10,15 @@ const port = 3000;
 
 
 app.post('/ask', async (req, res) => {
-    const { prompt } = req.body;
-    let answer = await functions.askChatGPT(prompt);
+    const { prompt, ustanova } = req.body;
+    let answer = await functions.askChatGPT(prompt, ustanova);
 
     res.status(201).json({ message: answer });
 });
 
 app.post('/addData', async (req, res) => {
-    const { prompt } = req.body;
-    let data = await functions.storeInformation(prompt);
+    const { prompt, ustanova } = req.body;
+    let data = await functions.storeInformation(prompt, ustanova);
 
     res.status(201).json({ message: data });
 });
