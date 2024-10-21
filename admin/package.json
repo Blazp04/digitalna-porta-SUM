@@ -1,5 +1,5 @@
 {
-  "name": "skyguard-web",
+  "name": "djuro-admin",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,10 +12,8 @@
   },
   "dependencies": {
     "@vueuse/core": "^11.1.0",
-    "appwrite": "^14.0.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "embla-carousel-vue": "^8.3.0",
     "lucide-vue-next": "^0.453.0",
     "radix-vue": "^1.9.7",
     "tailwind-merge": "^2.5.4",
@@ -24,8 +22,6 @@
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
-    "@iconify-json/radix-icons": "^1.2.1",
-    "@iconify/vue": "^4.1.2",
     "@tsconfig/node20": "^20.1.4",
     "@types/node": "^20.16.13",
     "@vitejs/plugin-vue": "^5.1.4",
