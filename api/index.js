@@ -5,6 +5,7 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 app.use(cors());
+require('dotenv').config();
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -35,6 +36,22 @@ app.post('/embedding', async (req, res) => {
     answer = await embedding.createEmbedingFromOpenAI(prompt);
 
     res.status(201).json({ embedding: answer });
+});
+
+app.use((req, res, next) => {
+    const apiKey = req.header('api-key');
+    if (!apiKey) {
+        return res.status(400).json({ error: 'API key is missing' });
+    }
+    next();
+});
+
+app.get('/documents', (req, res) => {
+    const apiKey = req.header('api-key');
+    if (!apiKey) {
+        return res.status(400).json({ error: 'API key is missing' });
+    }
+    res.status(200).json({ documents: functions.getDocuments() });
 });
 
 app.get('/status', (req, res) => {
