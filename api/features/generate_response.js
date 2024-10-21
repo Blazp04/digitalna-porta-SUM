@@ -4,11 +4,11 @@ const database = require('./database');
 
 
 
-async function askChatGPT(prompt, ustanova) {
+async function askChatGPT(prompt, api_key) {
     //create embeding
     vectors = await embedding.createEmbedingFromOpenAI(prompt);
     //getting data from databse
-    let data = await database.getDataFromDatabase(vectors, ustanova);
+    let data = await database.getDataFromDatabase(vectors, api_key);
 
     let systemMessage = await chat.prepareDataForSystemMessage(prompt, data);
 
@@ -16,11 +16,11 @@ async function askChatGPT(prompt, ustanova) {
 
 }
 
-async function storeInformation(prompt, ustanova) {
+async function storeInformation(prompt, title, api_key) {
     //create embeding
     vectors = await embedding.createEmbedingFromOpenAI(prompt);
 
-    data = await database.addDataToDatabase(prompt, vectors, ustanova);
+    data = await database.addDataToDatabase(prompt, title, vectors, api_key);
 
     return data;
 

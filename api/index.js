@@ -18,15 +18,18 @@ const port = 3000;
 
 
 app.post('/ask', async (req, res) => {
-    const { prompt, ustanova } = req.body;
-    let answer = await functions.askChatGPT(prompt, ustanova);
+    const { prompt, } = req.body;
+    const apiKey = req.header('api-key');
+    let answer = await functions.askChatGPT(prompt, apiKey);
 
     res.status(201).json({ message: answer });
 });
 
 app.post('/addData', async (req, res) => {
-    const { prompt, ustanova } = req.body;
-    let data = await functions.storeInformation(prompt, ustanova);
+    const { text, title } = req.body;
+    const apiKey = req.header('api-key');
+
+    let data = await functions.storeInformation(text, title, apiKey);
 
     res.status(201).json({ message: data });
 });

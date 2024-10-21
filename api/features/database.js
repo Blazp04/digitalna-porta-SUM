@@ -20,42 +20,50 @@ db.connect((err) => {
         console.error('Error connecting to the database:', err.stack);
 
         console.error('Greška pri povezivanju:', err.message);
-        console.error('Detalji greške:', err);
         return;
     }
     console.log('Connected to the database');
 });
 
 // Function to fetch data
-async function getDataFromDatabase(embedding, ustanova) {
-    const query = `SELECT text, dot_product(vector, JSON_ARRAY_PACK(?)) as score
-                   FROM documents
-                   WHERE ustanova = ?
+async function getDataFromDatabase(embeding, api_key) {
+
+    await new Promise((resolve, reject) => {
+        db.connect((err) => {
+            if (err) reject(err);
+            else resolve();
+        });
+    });
+
+    const query = `select text, dot_product(vector, JSON_ARRAY_PACK("[${embeding}]")) as score
+                   FROM znanje
+                   WHERE api_key = "${api_key}"
                    ORDER BY score DESC
                    LIMIT 2;`;
 
     const result = await new Promise((resolve, reject) => {
-        db.query(query, [embedding, ustanova], (err, result) => {
+        db.query(query, (err, result) => {
             if (err) reject(err);
             else resolve(result);
         });
     });
 
-    const informacije = result.map(item => item.text);
+    const informacije = await result.map(item => item.text);
     return informacije;
 }
 
+
 // Function to insert data
-async function addDataToDatabase(text, embedding, ustanova) {
-    const query = `INSERT INTO documents (text, vector, ustanova, datum) 
-                   VALUES (?, JSON_ARRAY_PACK(?), ?, CURDATE());`;
+async function addDataToDatabase(text, title, embedding, api_key) {
+    const query = `INSERT INTO znanje ( text, title, vector, api_key, datum ) VALUES ( "${text}", "${title}", JSON_ARRAY_PACK("[${embedding}]"), "${api_key}", CURDATE() );`;
 
     const result = await new Promise((resolve, reject) => {
-        db.query(query, [text, embedding, ustanova], (err, result) => {
+        db.query(query, (err, result) => {
             if (err) reject(err);
             else resolve(result);
         });
     });
+
 
     return result;
 }
