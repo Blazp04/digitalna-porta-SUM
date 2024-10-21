@@ -1,6 +1,9 @@
+require('dotenv').config();
+
+
 const openAIHeader = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer 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'
+    'Authorization': 'Bearer ' + process.env.OPENAI_API_KEY
 }
 
 async function createEmbedingFromOpenAI(prompt) {
