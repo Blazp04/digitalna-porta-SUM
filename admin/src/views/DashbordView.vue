@@ -20,36 +20,69 @@ const response = ref();
 const selectedTab = ref(0);
 const documentText = ref('');
 
+function updateDocumentText(value: string) {
+    documentText.value = value;
+}
+
 async function handleClick(index: number) {
     selectedTab.value = index;
     documentText.value = await getDocumentDetails(response.value[index].id);
 }
 
-function deleteDocument(documentID: number) {
+async function deleteDocument(index: number) {
     if (response.value.length > 1) {
-        response.value.splice(documentID, 1);
-        if (documentID === selectedTab.value) {
-            selectedTab.value = Math.max(0, documentID - 1);
+        response.value.splice(index, 1);
+        if (index === selectedTab.value) {
+            selectedTab.value = Math.max(0, index - 1);
         }
         documentText.value = response.value[selectedTab.value]?.fullText || '';
     } else {
-        response.value.splice(documentID, 1);
+        response.value.splice(index, 1);
         selectedTab.value = 0;
         documentText.value = '';
     }
-    console.log("delete");
-    console.table(response.value);
+    const api_key = localStorage.getItem('api_key')
+    try {
+        await axios.post(import.meta.env.VITE_API_BASE_URL + '/delete-document',
+            {
+                id: response.value[index].id
+            },
+            {
+                headers: {
+                    'api-key': api_key,
+                }
+            });
+    } catch (error) {
+        console.error("Error fetching documents:", error);
+    }
 }
 
-function saveDocument(documentID: number) {
-    alert("save");
+async function saveDocument(index: number) {
+    console.log(documentText.value);
+    const api_key = localStorage.getItem('api_key')
+
+    try {
+        await axios.post(import.meta.env.VITE_API_BASE_URL + '/update-document',
+            {
+                id: response.value[index].id,
+                text: documentText.value
+            },
+            {
+                headers: {
+                    'api-key': api_key,
+                }
+            });
+    } catch (error) {
+        console.error("Error fetching documents:", error);
+    }
 }
 
 async function getDocuments() {
+    const api_key = localStorage.getItem('api_key')
     try {
         const responseData = await axios.get(import.meta.env.VITE_API_BASE_URL + '/documents', {
             headers: {
-                'api-key': import.meta.env.VITE_API_KEY,
+                'api-key': api_key,
             }
         });
         response.value = responseData.data.documents;
@@ -60,6 +93,8 @@ async function getDocuments() {
 }
 
 async function getDocumentDetails(documentID: number) {
+    const api_key = localStorage.getItem('api_key')
+
     try {
         const responseData = await axios.post(import.meta.env.VITE_API_BASE_URL + '/document-details',
             {
@@ -67,7 +102,7 @@ async function getDocumentDetails(documentID: number) {
             },
             {
                 headers: {
-                    'api-key': import.meta.env.VITE_API_KEY,
+                    'api-key': api_key,
                 }
             });
         return responseData.data.document[0].text;
@@ -99,7 +134,7 @@ onMounted(async () => {
             <CardTitle>Djuro pregled znanja</CardTitle>
         </CardHeader>
         <CardContent style="height: 90%">
-            <Textarea style="height: 90%" :modelValue="documentText" />
+            <Textarea style="height: 90%" :modelValue="documentText" @input="updateDocumentText($event.target.value)" />
             <br>
             <div style="display: flex; gap: 10px;">
                 <Button style="background-color: red; color: white;" @click="deleteDocument(selectedTab)">Izbriši

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import App from './App.vue';
+// import App from './App.vue';
 
 
 import {
@@ -23,13 +23,13 @@ mode.value = 'dark'
 const apiKey = ref<string>('');
 const router = useRouter();
 const login = async (): Promise<void> => {
-  if (apiKey.value === import.meta.env.VITE_ADMIN_PASSWORD) {
-
-    router.push('/dashboard');
-  }
-  else {
-    alert("Wrong API key");
-  }
+  // if (apiKey.value === import.meta.env.VITE_ADMIN_PASSWORD) {
+  localStorage.setItem('api_key', apiKey.value);
+  router.push('/dashboard');
+  // }
+  // else {
+  //   alert("Wrong API key");
+  // }
 };
 </script>
 
