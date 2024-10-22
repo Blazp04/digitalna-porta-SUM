@@ -12,7 +12,6 @@ services:
     ports:
       - "3000"
     environment:
-      NODE_ENV: ${NODE_ENV}
       SINGLESTORE_USER: ${SINGLESTORE_USER}
       SINGLESTORE_PASSWORD: ${SINGLESTORE_PASSWORD}
       SINGLESTORE_HOST: ${SINGLESTORE_HOST}
