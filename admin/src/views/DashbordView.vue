@@ -11,40 +11,21 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import axios from 'axios';
 
 const mode = useColorMode();
 mode.value = 'dark';
 
-const response = ref([
-    {
-        "name": "Prvo",
-        "fullText": "Ovo je prvo zannje",
-        "id": 1
-    },
-    {
-        "name": "Drugo",
-        "fullText": "Ovo je drugo zannje",
-        "id": 2
-    },
-    {
-        "name": "Treće",
-        "fullText": "Ovo je treće zannje",
-        "id": 3
-    }
-]);
-
+const response = ref();
 const selectedTab = ref(0);
 const documentText = ref('');
 
-function handleClick(documentID) {
-    console.log("Clicked Document ID:", documentID);
-    selectedTab.value = documentID;
-    documentText.value = response.value[documentID].fullText;
-    console.log(selectedTab.value);
-    console.table(response.value);
+async function handleClick(index: number) {
+    selectedTab.value = index;
+    documentText.value = await getDocumentDetails(response.value[index].id);
 }
 
-function deleteDocument(documentID) {
+function deleteDocument(documentID: number) {
     if (response.value.length > 1) {
         response.value.splice(documentID, 1);
         if (documentID === selectedTab.value) {
@@ -60,12 +41,44 @@ function deleteDocument(documentID) {
     console.table(response.value);
 }
 
-function saveDocument(documentID) {
+function saveDocument(documentID: number) {
     alert("save");
 }
 
-onMounted(() => {
-    handleClick(selectedTab.value);
+async function getDocuments() {
+    try {
+        const responseData = await axios.get(import.meta.env.VITE_API_BASE_URL + '/documents', {
+            headers: {
+                'api-key': import.meta.env.VITE_API_KEY,
+            }
+        });
+        response.value = responseData.data.documents;
+        handleClick(selectedTab.value);
+    } catch (error) {
+        console.error("Error fetching documents:", error);
+    }
+}
+
+async function getDocumentDetails(documentID: number) {
+    try {
+        const responseData = await axios.post(import.meta.env.VITE_API_BASE_URL + '/document-details',
+            {
+                id: documentID
+            },
+            {
+                headers: {
+                    'api-key': import.meta.env.VITE_API_KEY,
+                }
+            });
+        return responseData.data.document[0].text;
+        handleClick(selectedTab.value);
+    } catch (error) {
+        console.error("Error fetching documents:", error);
+    }
+}
+
+onMounted(async () => {
+    await getDocuments()
 });
 </script>
 
