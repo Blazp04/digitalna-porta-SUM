@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS djuro;
 
 CREATE TABLE IF NOT EXISTS znanje(
+    id INT AUTO_INCREMENT PRIMARY KEY,
     text TEXT,
     title TEXT,
     api_key TEXT,

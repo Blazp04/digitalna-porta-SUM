@@ -1,3 +1,4 @@
+const { query } = require('express');
 const mysql = require('mysql2');
 require('dotenv').config();
 
@@ -27,7 +28,6 @@ db.connect((err) => {
 
 // Function to fetch data
 async function getDataFromDatabase(embeding, api_key) {
-
     await new Promise((resolve, reject) => {
         db.connect((err) => {
             if (err) reject(err);
@@ -52,10 +52,8 @@ async function getDataFromDatabase(embeding, api_key) {
     return informacije;
 }
 
-
-// Function to insert data
-async function addDataToDatabase(text, title, embedding, api_key) {
-    const query = `INSERT INTO znanje ( text, title, vector, api_key, datum ) VALUES ( "${text}", "${title}", JSON_ARRAY_PACK("[${embedding}]"), "${api_key}", CURDATE() );`;
+async function getDocuments(api_key) {
+    const query = `SELECT title,id FROM znanje WHERE api_key = "${api_key}";`
 
     const result = await new Promise((resolve, reject) => {
         db.query(query, (err, result) => {
@@ -63,12 +61,64 @@ async function addDataToDatabase(text, title, embedding, api_key) {
             else resolve(result);
         });
     });
+    const data = await result.map(item => ({ name: item.title, id: item.id }));
+    console.log(api_key)
+    return data
+
+}
+async function getDocumentDetails(api_key, id) {
+    const query = `SELECT text FROM znanje WHERE api_key = "${api_key}" AND id = "${id}";`
+    const result = await new Promise((resolve, reject) => {
+        db.query(query, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
+    const data = await result.map(item => ({ text: item.text }));
+    return data
+}
+
+async function updateTextForDocument(api_key, id, text, embedding) {
+    const query = `UPDATE znanje SET text = "${text}", vector = JSON_ARRAY_PACK("[${embedding}]")  WHERE api_key = "${api_key}" AND id = "${id}";`
+    const result = await new Promise((resolve, reject) => {
+        db.query(query, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
+    return result;
+}
 
 
+// Function to insert data
+async function addDataToDatabase(text, title, embedding, api_key) {
+    const query = `INSERT INTO znanje (text, title, vector, api_key, datum) VALUES("${text}", "${title}", JSON_ARRAY_PACK("[${embedding}]"), "${api_key}", CURDATE()); `;
+
+    const result = await new Promise((resolve, reject) => {
+        db.query(query, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
+    return result;
+}
+
+async function deleteFromDatabase(api_key, id) {
+    const query = `DELETE FROM znanje WHERE api_key = "${api_key}" AND id = "${id}";`
+    const result = await new Promise((resolve, reject) => {
+        db.query(query, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
     return result;
 }
 
 module.exports = {
     getDataFromDatabase,
     addDataToDatabase,
+    getDocuments,
+    getDocumentDetails,
+    updateTextForDocument,
+    deleteFromDatabase,
 };

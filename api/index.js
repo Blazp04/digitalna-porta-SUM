@@ -1,6 +1,7 @@
 const express = require('express');
 const functions = require('./features/generate_response'); // Updated import path
 const embedding = require('./features/embeding');
+const database = require('./features/database');
 const cors = require('cors');
 const app = express();
 app.use(express.json());
@@ -49,13 +50,47 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/documents', (req, res) => {
+app.get('/documents', async (req, res) => {
     const apiKey = req.header('api-key');
     if (!apiKey) {
         return res.status(400).json({ error: 'API key is missing' });
     }
-    res.status(200).json({ documents: functions.getDocuments() });
+    const data = await database.getDocuments(apiKey);
+    res.status(200).json({ documents: data });
 });
+
+app.post('/document-details', async (req, res) => {
+    const { id } = req.body;
+
+    const apiKey = req.header('api-key');
+    if (!apiKey) {
+        return res.status(400).json({ error: 'API key is missing' });
+    }
+    const data = await database.getDocumentDetails(apiKey, id);
+    res.status(200).json({ document: data });
+});
+app.post('/update-document', async (req, res) => {
+    const { id, text } = req.body;
+
+    const apiKey = req.header('api-key');
+    if (!apiKey) {
+        return res.status(400).json({ error: 'API key is missing' });
+    }
+    const vectors = await embedding.createEmbedingFromOpenAI(text)
+    const data = await database.updateTextForDocument(apiKey, id, text, vectors);
+    res.status(200).json({ document: data });
+});
+
+app.post('/delete-document', async (req, res) => {
+    const { id } = req.body;
+    const apiKey = req.header('api-key');
+    if (!apiKey) {
+        return res.status(400).json({ error: 'API key is missing' });
+    }
+    const data = await database.deleteFromDatabase(apiKey, id,);
+    res.status(200).json({ resoult: data });
+});
+
 
 app.get('/status', (req, res) => {
     res.status(200).json({ status: 'API is running' });
