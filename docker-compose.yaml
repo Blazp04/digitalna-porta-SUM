@@ -18,13 +18,3 @@ services:
       SINGLESTORE_HOST: ${SINGLESTORE_HOST}
       SINGLESTORE_DATABASE: ${SINGLESTORE_DATABASE}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
-  singlestore:
-    image: 'singlestore/cluster-in-a-box'
-    ports:
-      - 3306:3306
-      - 8080
-    environment:
-      LICENSE_KEY: BGY0ODA3MDcwODIwYzRlYzViMmVkZWExYTRkNzZmOWYxAAAAAAAAAAAEAAAAAAAAACgwNQIZANJGKRUDDCYFX4haK46B55YkAsW4x/cWdAIYOVuezYO4tudv70akJF4XyorAC2lWgQwsAA==
-      ROOT_PASSWORD: Tomisl@vgrad123
-      START_AFTER_INIT: 'Y'
-    restart: always
