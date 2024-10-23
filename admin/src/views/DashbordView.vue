@@ -90,7 +90,7 @@ async function saveDocument(index: number) {
 async function getDocuments() {
     const api_key = localStorage.getItem('api_key')
     try {
-        const responseData = await axios.get(import.meta.env.VITE_API_BASE_URL + '/documents', {
+        const responseData = await axios.get('https://api.app.blazperic.com/documents', {
             headers: {
                 'api-key': api_key,
             }
