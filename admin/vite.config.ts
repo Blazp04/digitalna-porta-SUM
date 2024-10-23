@@ -19,6 +19,16 @@ export default defineConfig({
     vue(),
     vueDevTools(),
   ],
+  server: {
+    proxy: {
+      '/': {
+        target: process.env.VITE_API_BASE_URL,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
+
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
