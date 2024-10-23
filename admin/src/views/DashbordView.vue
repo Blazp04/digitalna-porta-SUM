@@ -53,7 +53,7 @@ async function deleteDocument(index: number) {
     }
     const api_key = localStorage.getItem('api_key')
     try {
-        await axios.post(import.meta.env.VITE_API_BASE_URL + '/delete-document',
+        await axios.post("https://api.app.blazperic.com" + '/delete-document',
             {
                 id: response.value[index].id
             },
@@ -72,7 +72,7 @@ async function saveDocument(index: number) {
     const api_key = localStorage.getItem('api_key')
 
     try {
-        await axios.post(import.meta.env.VITE_API_BASE_URL + '/update-document',
+        await axios.post("https://api.app.blazperic.com" + '/update-document',
             {
                 id: response.value[index].id,
                 text: documentText.value
@@ -90,6 +90,7 @@ async function saveDocument(index: number) {
 async function getDocuments() {
     const api_key = localStorage.getItem('api_key')
     try {
+        // This doesen't work poperly so i hardcoded it...
         const responseData = await axios.get('https://api.app.blazperic.com/documents', {
             headers: {
                 'api-key': api_key,
@@ -106,7 +107,7 @@ async function getDocumentDetails(documentID: number) {
     const api_key = localStorage.getItem('api_key')
 
     try {
-        const responseData = await axios.post(import.meta.env.VITE_API_BASE_URL + '/document-details',
+        const responseData = await axios.post("https://api.app.blazperic.com" + '/document-details',
             {
                 id: documentID
             },
@@ -128,7 +129,7 @@ async function createDocument() {
     const api_key = localStorage.getItem('api_key')
 
     try {
-        await axios.post(import.meta.env.VITE_API_BASE_URL + '/addData',
+        await axios.post("https://api.app.blazperic.com" + '/addData',
             {
                 text: newDocumentText.value,
                 title: newDocumentName.value
